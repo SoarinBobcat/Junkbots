@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +6,8 @@ public class Player_Movement : MonoBehaviour
 {
     //Player Speed Variables
     int spd = 10;
-    float acc = 0.1f;
+    float g_acc = 0.1f;
+    float a_acc = 0.05f;
     float decc = 0.3f;
 
     float k_forward;
@@ -19,8 +20,8 @@ public class Player_Movement : MonoBehaviour
     Vector3 currSpd = Vector3.zero;
 
     //Player Jump Variables
-    int grav = 1;
-    int jump_spd = 12;
+    float grav = 0.2f;
+    int jumpSpd = 30;
 
     //State Machine stuff for later ;)
     enum STATES
@@ -60,10 +61,17 @@ public class Player_Movement : MonoBehaviour
         dir = Vector3.Normalize(dir);
 
         //Add acceleration to current velocity...or decceleration if no meowvement =|owo|=
+        //Strafing
         if ((Mathf.Abs(x_move) == 1)) {
-            currSpd.x += dir.x * acc;
+            if (c_c.isGrounded)
+            {
+                currSpd.x += dir.x * g_acc;
+            } else
+            {
+                currSpd.x += dir.x * a_acc;
+            }
         }
-        else
+        else if (c_c.isGrounded)
         {
             if ((Mathf.Abs(currSpd.x) - Mathf.Sign(currSpd.x) * decc) > 0)
             {
@@ -75,9 +83,17 @@ public class Player_Movement : MonoBehaviour
             }
         }
 
+        //Forwards and Backwards
         if ((Mathf.Abs(z_move) == 1)) {
-            currSpd.z += dir.z * acc;
-        } else
+            if (c_c.isGrounded)
+            {
+                currSpd.z += dir.z * g_acc;
+            }
+            else
+            {
+                currSpd.z += dir.z * a_acc;
+            }
+        } else if (c_c.isGrounded)
         {
             if ((Mathf.Abs(currSpd.z) - Mathf.Sign(currSpd.z) * decc) > 0)
             {
@@ -89,6 +105,20 @@ public class Player_Movement : MonoBehaviour
             }
         }
 
+        //Jumping "Yahoo~♪"
+        if (!c_c.isGrounded){
+            currSpd.y -= grav;
+        } else
+        {
+            currSpd.y = -0.1f;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && c_c.isGrounded)
+        {
+            currSpd.y += jumpSpd;
+        }
+
+        //Clamp speed
         currSpd.x = Mathf.Clamp(currSpd.x, -spd, spd);
         currSpd.z = Mathf.Clamp(currSpd.z, -spd, spd);
 
