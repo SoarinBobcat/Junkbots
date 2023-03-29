@@ -6,7 +6,7 @@ public class Player_Movement : MonoBehaviour
 {
     //Player Speed Variables
     int spd = 10;
-    float g_acc = 0.1f;
+    float g_acc = 0.2f;
     float a_acc = 0.05f;
     float decc = 0.3f;
 
@@ -20,8 +20,8 @@ public class Player_Movement : MonoBehaviour
     Vector3 currSpd = Vector3.zero;
 
     //Player Jump Variables
-    float grav = 0.2f;
-    int jumpSpd = 30;
+    float grav = 0.3f;
+    int jumpSpd = 20;
 
     //State Machine stuff for later ;)
     enum STATES
