@@ -10,15 +10,14 @@ public class Player_Movement : MonoBehaviour
     float a_acc = 0.05f;
     float decc = 0.3f;
 
+    float k_forward;
+    float k_backward;
+    float k_left;
+    float k_right;
     float x_move;
     float z_move;
     Vector3 dir = Vector3.zero;
     Vector3 currSpd = Vector3.zero;
-
-    //Turning Variables
-    float turnSmoothTime = 0.1f;
-    float turnSmoothVelocity;
-    float targetAngle = 0;
 
     //Player Jump Variables
     float grav = 0.3f;
@@ -37,7 +36,6 @@ public class Player_Movement : MonoBehaviour
     int s = (int) STATES.Main;
 
     private CharacterController c_c;
-    public Transform cam;
 
     // Start is called before the first frame update
     void Start()
@@ -49,34 +47,72 @@ public class Player_Movement : MonoBehaviour
     void Update()
     {
         //Get Player Input
-        x_move = Input.GetAxisRaw("Horizontal");
-        z_move = Input.GetAxisRaw("Vertical");
+        k_forward = Input.GetKey(KeyCode.W) ? 1 : 0;
+        k_backward = Input.GetKey(KeyCode.S) ? 1 : 0;
+        k_left = Input.GetKey(KeyCode.A) ? 1 : 0;
+        k_right = Input.GetKey(KeyCode.D) ? 1 : 0;
 
-        //Turn to face movement dir
-        if ((x_move != 0) || (z_move != 0))
-        {
-            targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-        }
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        //Convert Input to Axes
+        x_move = k_right-k_left;
+        z_move = k_forward-k_backward;
 
         //Convert Axes to Direction Vector
-        dir = new Vector3(x_move, 0, z_move).normalized;
+        dir = new Vector3(x_move, 0, z_move);
+        dir = Vector3.Normalize(dir);
 
         //Add acceleration to current velocity...or decceleration if no meowvement =|owo|=
-        currSpd.x = accNDecc(x_move, dir.x, currSpd.x);
-        currSpd.z = accNDecc(z_move, dir.z, currSpd.z);
+        //Strafing
+        if ((Mathf.Abs(x_move) == 1)) {
+            if (c_c.isGrounded)
+            {
+                currSpd.x += dir.x * g_acc;
+            } else
+            {
+                currSpd.x += dir.x * a_acc;
+            }
+        }
+        else if (c_c.isGrounded)
+        {
+            if ((Mathf.Abs(currSpd.x) - Mathf.Sign(currSpd.x) * decc) > 0)
+            {
+                currSpd.x -= Mathf.Sign(currSpd.x) * decc;
+            }
+            else
+            {
+                currSpd.x = 0;
+            }
+        }
+
+        //Forwards and Backwards
+        if ((Mathf.Abs(z_move) == 1)) {
+            if (c_c.isGrounded)
+            {
+                currSpd.z += dir.z * g_acc;
+            }
+            else
+            {
+                currSpd.z += dir.z * a_acc;
+            }
+        } else if (c_c.isGrounded)
+        {
+            if ((Mathf.Abs(currSpd.z) - Mathf.Sign(currSpd.z) * decc) > 0)
+            {
+                currSpd.z -= Mathf.Sign(currSpd.z) * decc;
+            }
+            else
+            {
+                currSpd.z = 0;
+            }
+        }
 
         //Jumping "Yahoo~♪"
-        //Apply gravity when in air
         if (!c_c.isGrounded){
             currSpd.y -= grav;
         } else
         {
-            currSpd.y = -1f;
+            currSpd.y = -0.1f;
         }
 
-        //Jump if grounded
         if (Input.GetKeyDown(KeyCode.Space) && c_c.isGrounded)
         {
             currSpd.y += jumpSpd;
@@ -88,39 +124,5 @@ public class Player_Movement : MonoBehaviour
 
         //Apply velocity
         c_c.Move(currSpd * Time.deltaTime);
-    }
-
-    /*
-    Calculates the acceleration and decceleration of an axis;
-    axis = The variable holding current axis input (e.g x_move)
-    d = dir.[The axis to be calculated]
-    vel = currSpd.[The axis to be calculated]
-    */
-    private float accNDecc(float axis, float d, float vel)
-    {
-        if ((Mathf.Abs(axis) == 1))
-        {
-            if (c_c.isGrounded)
-            {
-                vel += d * g_acc;
-            }
-            else
-            {
-                vel += d * a_acc;
-            }
-        }
-        else if (c_c.isGrounded)
-        {
-            if ((Mathf.Abs(vel) - Mathf.Sign(vel) * decc) > 0)
-            {
-                vel -= Mathf.Sign(vel) * decc;
-            }
-            else
-            {
-                vel = 0;
-            }
-        }
-
-        return vel;
     }
 }
