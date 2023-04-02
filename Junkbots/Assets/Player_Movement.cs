@@ -5,13 +5,15 @@ using UnityEngine;
 public class Player_Movement : MonoBehaviour
 {
     //Player Speed Variables
-    int spd = 10;
-    float g_acc = 0.2f;
+    int spd = 8;
+    float g_acc = 0.3f;
     float a_acc = 0.05f;
-    float decc = 0.3f;
+    float decc = 0.2f;
 
     float x_move;
     float z_move;
+    Vector3 xMove;
+    Vector3 zMove;
     Vector3 dir = Vector3.zero;
     Vector3 currSpd = Vector3.zero;
 
@@ -21,7 +23,7 @@ public class Player_Movement : MonoBehaviour
     float targetAngle = 0;
 
     //Player Jump Variables
-    float grav = 0.3f;
+    float grav = 0.2f;
     int jumpSpd = 20;
 
     //State Machine stuff for later ;)
@@ -52,6 +54,11 @@ public class Player_Movement : MonoBehaviour
         x_move = Input.GetAxisRaw("Horizontal");
         z_move = Input.GetAxisRaw("Vertical");
 
+        xMove = x_move * cam.right;
+        zMove = z_move * cam.forward;
+
+        dir = xMove + zMove;
+
         //Turn to face movement dir
         if ((x_move != 0) || (z_move != 0))
         {
@@ -60,18 +67,35 @@ public class Player_Movement : MonoBehaviour
         float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
         transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
-        //Convert Axes to Direction Vector
-        dir = new Vector3(x_move, 0, z_move).normalized;
-
         //Add acceleration to current velocity...or decceleration if no meowvement =|owo|=
-        currSpd.x = accNDecc(x_move, dir.x, currSpd.x);
-        currSpd.z = accNDecc(z_move, dir.z, currSpd.z);
+        if ((x_move != 0) || (z_move != 0))
+        {
+            if (c_c.isGrounded)
+            {
+                currSpd += xMove * g_acc + zMove * g_acc;
+            }
+            else
+            {
+                currSpd += xMove * a_acc + zMove * a_acc;
+            }
+        } 
+        
+        if (c_c.isGrounded)
+        {
+            currSpd.x = deccelerate(currSpd.x);
+            currSpd.z = deccelerate(currSpd.z);
+        }
+
+        //Clamp speed
+        currSpd.x = Mathf.Clamp(currSpd.x, -spd, spd);
+        currSpd.z = Mathf.Clamp(currSpd.z, -spd, spd);
 
         //Jumping "Yahoo~♪"
         //Apply gravity when in air
         if (!c_c.isGrounded){
             currSpd.y -= grav;
-        } else
+        } 
+        else
         {
             currSpd.y = -1f;
         }
@@ -82,43 +106,25 @@ public class Player_Movement : MonoBehaviour
             currSpd.y += jumpSpd;
         }
 
-        //Clamp speed
-        currSpd.x = Mathf.Clamp(currSpd.x, -spd, spd);
-        currSpd.z = Mathf.Clamp(currSpd.z, -spd, spd);
-
         //Apply velocity
         c_c.Move(currSpd * Time.deltaTime);
     }
 
     /*
     Calculates the acceleration and decceleration of an axis;
-    axis = The variable holding current axis input (e.g x_move)
     d = dir.[The axis to be calculated]
-    vel = currSpd.[The axis to be calculated]
-    */
-    private float accNDecc(float axis, float d, float vel)
+    vel = currSpd.[The axis to be calculated]*/
+    
+    private float deccelerate(float vel)
     {
-        if ((Mathf.Abs(axis) == 1))
+      
+        if ((Mathf.Abs(vel) - Mathf.Sign(vel) * decc) > 0)
         {
-            if (c_c.isGrounded)
-            {
-                vel += d * g_acc;
-            }
-            else
-            {
-                vel += d * a_acc;
-            }
+            vel -= Mathf.Sign(vel) * decc;
         }
-        else if (c_c.isGrounded)
+        else
         {
-            if ((Mathf.Abs(vel) - Mathf.Sign(vel) * decc) > 0)
-            {
-                vel -= Mathf.Sign(vel) * decc;
-            }
-            else
-            {
-                vel = 0;
-            }
+            vel = 0;
         }
 
         return vel;
