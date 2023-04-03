@@ -51,6 +51,15 @@ public class Player_Movement : MonoBehaviour
     void Update()
     {
         //Get Player Input
+        Vector3 camForward = cam.forward;
+        Vector3 camRight = cam.right;
+
+        camForward.y = 0;
+        camRight.y = 0;
+
+        camForward = camForward.normalized;
+        camRight = camRight.normalized;
+
         x_move = Input.GetAxisRaw("Horizontal");
         z_move = Input.GetAxisRaw("Vertical");
 

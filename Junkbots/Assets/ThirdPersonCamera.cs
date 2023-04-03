@@ -6,7 +6,7 @@ public class ThirdPersonCamera : MonoBehaviour
 {
 	//Clamp values for looking up and down
 	private const float Y_Min = -40;
-	private const float Y_Max = 70;
+	private const float Y_Max = 40;
 
 	//Player and camera transforms
 	public Transform lookAt;
