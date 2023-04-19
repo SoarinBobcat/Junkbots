@@ -541,26 +541,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 898394607}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be7b863134d24524baef51c6308d2fee, type: 3}
+  m_Script: {fileID: 11500000, guid: 3dcfb1fb21c9c5c40985e46ee08f3a43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fric: 6
-  grav: 20
-  jumpSpd: 8
-  autoHop: 0
-  airControl: 0.3
-  groundSettings:
-    Spd: 7
-    Acc: 14
-    Decc: 10
-  airSettings:
-    Spd: 7
-    Acc: 2
-    Decc: 2
-  strafeSettings:
-    Spd: 1
-    Acc: 50
-    Decc: 50
+  cam: {fileID: 963194228}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -835,7 +819,7 @@ PrefabInstance:
     - target: {fileID: 3799596426075476219, guid: faf52655c2337554481f42ea0c0753b9, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: f7a6e07032608af4a8b63c8150785ee4, type: 2}
+      objectReference: {fileID: 2100000, guid: 8eb0a7fa2cf7c494894eed100a3196ae, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: faf52655c2337554481f42ea0c0753b9, type: 3}
 --- !u!64 &8435365109163945864
