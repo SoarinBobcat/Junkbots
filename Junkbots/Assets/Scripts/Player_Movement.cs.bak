@@ -99,6 +99,11 @@ public class Player_Movement : MonoBehaviour
 
         //Apply velocity
         c_c.Move(vel * Time.deltaTime);
+		
+		//Restart
+		if (Input.GetKeyUp(KeyCode.R)) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     //Handles Ground Movement
