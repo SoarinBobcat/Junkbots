@@ -40,6 +40,7 @@ public class Player_Movement : MonoBehaviour
     //Current Velocity Variables
     float currSpd = 0f;
     Vector3 vel = Vector3.zero;
+    Vector3 vel2 = Vector3.zero;
     float accel = 0;
 
     //Turning Variables
@@ -48,8 +49,10 @@ public class Player_Movement : MonoBehaviour
     float targetAngle = 0;
 
     //Attack Variables
-    float attackCooldown = 1f;
-    bool canAttack = true;
+    float attackStart = 0.02f;
+    float attackActive = 0.25f;
+    float attackCooldown = 0.5f;
+    float attackTimer = 0f;
     float range = 1f;
 
     //State Machine stuff for later ;)
@@ -62,7 +65,22 @@ public class Player_Movement : MonoBehaviour
         Hurt
     }
 
-    int s = (int) STATES.Main;
+    int s = (int)STATES.Main;
+
+    //Attack States
+    enum ATTACK
+    {
+        //Not Active
+        Idle,
+        //Attack In Progress but no active hitbox
+        StartUp,
+        //Active hitbox
+        Active,
+        //Attack is ending usually no hitbox
+        Cooldown
+    }
+
+    int aS = (int)ATTACK.Idle;
 
     private CharacterController c_c;
     public GameObject hitbox;
@@ -81,9 +99,11 @@ public class Player_Movement : MonoBehaviour
         xMove = Input.GetAxisRaw("Horizontal") * cam.right;
         zMove = Input.GetAxisRaw("Vertical") * cam.forward;
 
-        /*if (Input.GetButton("Fire1")) {
-            s = (int) STATES.Attack;
-        }*/
+        if ((Input.GetButton("Fire1")) && (aS == (int)ATTACK.Idle)) {
+            s = (int)STATES.Attack;
+            aS = (int)ATTACK.StartUp;
+            attackTimer = attackStart;
+        }
 
         dir = xMove + zMove;
         dir.y = 0;
@@ -184,6 +204,54 @@ public class Player_Movement : MonoBehaviour
     //Handles Attacks
     private void Attack()
     {
-        
+        switch (aS)
+        {
+            case 1:
+                vel.x *= 0.95f;
+                vel.z *= 0.95f;
+                break;
+            case 2:
+                hitbox.SetActive(true);
+                break;
+            case 3:
+                hitbox.SetActive(false);
+                vel.x *= 0.9f;
+                vel.z *= 0.9f;
+                break;
+
+        }
+
+        attackTimer -= Time.deltaTime;
+        if (attackTimer <= 0)
+        {
+            switch (aS)
+            {
+                case 0:
+                    s = (int)STATES.Main;
+                    break;
+                case 1:
+                    aS = (int)ATTACK.Active;
+                    attackTimer = attackActive;
+                    break;
+                case 2:
+                    aS = (int)ATTACK.Cooldown;
+                    attackTimer = attackCooldown;
+                    vel2 = cam.forward * gSettings.Spd * 1.5f;
+                    vel2.y = vel.y;
+                    vel = vel2;
+                    break;
+                case 3:
+                    aS = (int)ATTACK.Idle;
+                    break;
+            }
+        }
+    }
+
+    private void OnTriggerHit(Collider other)
+    {
+        if (other.tag == "Enemy")
+        {
+            other.gameObject.GetComponent<BaseEnemy>().vel = vel*2;
+        }
     }
 }

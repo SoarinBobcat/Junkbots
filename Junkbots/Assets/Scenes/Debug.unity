@@ -152,7 +152,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 135507589}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 2
@@ -257,6 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20182462947c5343a92efd840169993, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vel: {x: 0, y: 0, z: 0}
 --- !u!1 &177168609
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,6 +1285,7 @@ MonoBehaviour:
   fric: 0.1
   grav: 1.2
   jumpSpd: 22
+  hitbox: {fileID: 1501388576}
   cam: {fileID: 411989223}
 --- !u!143 &1493457298
 CharacterController:
