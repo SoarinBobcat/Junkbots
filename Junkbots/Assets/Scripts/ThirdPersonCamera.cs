@@ -38,7 +38,9 @@ public class ThirdPersonCamera : MonoBehaviour
 		cam = Camera.main;
 
 		camDir = cam.transform.localPosition.normalized;
-    }
+
+		Cursor.lockState = CursorLockMode.Locked;
+	}
 
 	void Update()
     {

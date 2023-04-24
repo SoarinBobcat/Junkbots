@@ -47,6 +47,11 @@ public class Player_Movement : MonoBehaviour
     float turnSmoothVelocity;
     float targetAngle = 0;
 
+    //Attack Variables
+    float attackCooldown = 1f;
+    bool canAttack = true;
+    float range = 1f;
+
     //State Machine stuff for later ;)
     enum STATES
     {
@@ -60,6 +65,7 @@ public class Player_Movement : MonoBehaviour
     int s = (int) STATES.Main;
 
     private CharacterController c_c;
+    public GameObject hitbox;
     public Transform cam;
 
     // Start is called before the first frame update
@@ -75,26 +81,33 @@ public class Player_Movement : MonoBehaviour
         xMove = Input.GetAxisRaw("Horizontal") * cam.right;
         zMove = Input.GetAxisRaw("Vertical") * cam.forward;
 
+        /*if (Input.GetButton("Fire1")) {
+            s = (int) STATES.Attack;
+        }*/
+
         dir = xMove + zMove;
         dir.y = 0;
         dir.Normalize();
 
         //Turn to face movement dir
-        if ((Input.GetAxisRaw("Horizontal") != 0) || (Input.GetAxisRaw("Vertical") != 0))
+        transform.rotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
+
+        //State Machine
+        switch (s)
         {
-            targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-        }
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        transform.rotation = Quaternion.Euler(0f, angle, 0f);
-		
-        //Movement
-        if (c_c.isGrounded)
-        {
-            GroundMove();
-        }
-        else
-        {
-            AirMove();
+            case 0:
+                if (c_c.isGrounded)
+                {
+                    GroundMove();
+                }
+                else
+                {
+                    AirMove();
+                }
+                break;
+            case 1:
+                Attack();
+                break;
         }
 
         //Apply velocity
@@ -166,5 +179,11 @@ public class Player_Movement : MonoBehaviour
 
         vel.x = Mathf.Clamp((vel.x + (dir.x * accel)), -gSettings.Spd, gSettings.Spd);
         vel.z = Mathf.Clamp((vel.z + (dir.z * accel)), -gSettings.Spd, gSettings.Spd);
+    }
+
+    //Handles Attacks
+    private void Attack()
+    {
+        
     }
 }
