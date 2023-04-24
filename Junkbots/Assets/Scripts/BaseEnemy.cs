@@ -6,7 +6,7 @@ public class BaseEnemy : MonoBehaviour
 {
     float grav = 1f;
 
-    Vector3 vel = Vector3.zero;
+    public Vector3 vel = Vector3.zero;
 
     private CharacterController c_c;
 
