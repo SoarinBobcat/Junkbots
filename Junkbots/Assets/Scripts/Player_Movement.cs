@@ -112,6 +112,16 @@ public class Player_Movement : MonoBehaviour
         //Turn to face movement dir
         transform.rotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
 
+        //Apply Gravity
+        if (c_c.isGrounded)
+        {
+            vel.y = -grav;
+        }
+        else
+        {
+            vel.y -= grav;
+        }
+
         //State Machine
         switch (s)
         {
@@ -150,9 +160,7 @@ public class Player_Movement : MonoBehaviour
         }
 
         //Jumping "Yahoo~♪"
-        vel.y = -grav;
-		
-		if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
 		{
 			vel.y = jumpSpd;
 		}
@@ -191,9 +199,6 @@ public class Player_Movement : MonoBehaviour
     //Handles Air Movement
     private void AirMove()
     {
-        //Apply Gravity
-        vel.y -= grav;
-
         //Apply Accelearation and Clamp Speed
         accel = aSettings.Acc;
 
