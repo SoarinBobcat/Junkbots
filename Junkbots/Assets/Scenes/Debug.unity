@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 135507591}
   - component: {fileID: 135507595}
   - component: {fileID: 135507596}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Mark
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -1341,7 +1341,8 @@ MonoBehaviour:
   fric: 0.1
   grav: 1.2
   jumpSpd: 22
-  hitbox: {fileID: 1501388576}
+  hitbox:
+  - {fileID: 1501388578}
   cam: {fileID: 411989223}
 --- !u!143 &1493457298
 CharacterController:
@@ -1459,7 +1460,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1501388577
 Transform:
   m_ObjectHideFlags: 0

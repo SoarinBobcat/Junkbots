@@ -83,7 +83,7 @@ public class Player_Movement : MonoBehaviour
     int aS = (int)ATTACK.Idle;
 
     private CharacterController c_c;
-    public GameObject hitbox;
+    public Collider[] hitbox;
     public Transform cam;
 
     // Start is called before the first frame update
@@ -136,7 +136,7 @@ public class Player_Movement : MonoBehaviour
                 }
                 break;
             case 1:
-                Attack();
+                Attack(hitbox[0]);
                 break;
         }
 
@@ -207,7 +207,7 @@ public class Player_Movement : MonoBehaviour
     }
 
     //Handles Attacks
-    private void Attack()
+    private void Attack(Collider col)
     {
         switch (aS)
         {
@@ -216,10 +216,8 @@ public class Player_Movement : MonoBehaviour
                 vel.z *= 0.95f;
                 break;
             case 2:
-                hitbox.SetActive(true);
                 break;
             case 3:
-                hitbox.SetActive(false);
                 vel.x *= 0.9f;
                 vel.z *= 0.9f;
                 break;
@@ -229,6 +227,17 @@ public class Player_Movement : MonoBehaviour
         attackTimer -= Time.deltaTime;
         if (attackTimer <= 0)
         {
+			Collider[] cols = Physics.OverlapBox(col.bounds.center,col.bounds.extents,col.transform.rotation,LayerMask.GetMask("Hitbox"));
+			foreach(Collider c in cols)
+			{
+				if(c.transform.parent == transform)
+					continue;
+				
+				c.SendMessageUpwards("TakeDamage", gSettings.Spd*2*dir);
+				
+				Debug
+			}
+			
             switch (aS)
             {
                 case 0:
@@ -249,14 +258,6 @@ public class Player_Movement : MonoBehaviour
                     aS = (int)ATTACK.Idle;
                     break;
             }
-        }
-    }
-
-    private void OnTriggerHit(Collider other)
-    {
-        if (other.tag == "Enemy")
-        {
-            other.gameObject.GetComponent<BaseEnemy>().vel = vel*2;
         }
     }
 }

@@ -33,7 +33,6 @@ public class BaseEnemy : MonoBehaviour
 	
 	private void TakeDamage(Vector3 Force)
 	{
-		vel = Force;
-		vel.y = 12;
+		vel.
 	}
 }
