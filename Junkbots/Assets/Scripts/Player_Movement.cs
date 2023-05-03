@@ -234,8 +234,6 @@ public class Player_Movement : MonoBehaviour
 					continue;
 				
 				c.SendMessageUpwards("TakeDamage", gSettings.Spd*2*dir);
-				
-				Debug
 			}
 			
             switch (aS)

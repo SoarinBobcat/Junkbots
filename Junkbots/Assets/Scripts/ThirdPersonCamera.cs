@@ -15,7 +15,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	private Camera cam;
 
 	//Camera location variables
-	private float distance = 4.0f;
+	private float distance = 8.0f;
 	private Vector3 offset = new Vector3(0, 2, 0);
 	Vector2 offYMinMax = new Vector2(0.25f, 2);
 
@@ -30,7 +30,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	//Camera Collision
 	Vector3 camDir;
-	Vector2 camMinMax = new Vector2(2, 4);
+	Vector2 camMinMax = new Vector2(2, 8);
 
 	void Start()
     {
