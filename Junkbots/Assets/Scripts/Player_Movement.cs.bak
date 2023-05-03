@@ -39,13 +39,25 @@ public class Player_Movement : MonoBehaviour
 
     //Current Velocity Variables
     float currSpd = 0f;
-    Vector3 vel = Vector3.zero;
+    public Vector3 vel = Vector3.zero;
+    Vector3 vel2 = Vector3.zero;
     float accel = 0;
 
     //Turning Variables
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
     float targetAngle = 0;
+
+    //Attack Variables
+    float attackStart = 0.02f;
+    float attackActive = 0.25f;
+    float attackCooldown = 0.5f;
+    float attackTimer = 0f;
+    float range = 1f;
+	
+
+	bool moving = false;
+
 
     //State Machine stuff for later ;)
     enum STATES
@@ -57,54 +69,93 @@ public class Player_Movement : MonoBehaviour
         Hurt
     }
 
-    int s = (int) STATES.Main;
+    int s = (int)STATES.Main;
+
+    //Attack States
+    enum ATTACK
+    {
+        //Not Active
+        Idle,
+        //Attack In Progress but no active hitbox
+        StartUp,
+        //Active hitbox
+        Active,
+        //Attack is ending usually no hitbox
+        Cooldown
+    }
+
+    int aS = (int)ATTACK.Idle;
 
     private CharacterController c_c;
+    public GameObject hitbox;
     public Transform cam;
 
     // Start is called before the first frame update
     void Start()
     {
-        c_c = gameObject.GetComponent<CharacterController>();
+        c_c = gameObject.GetComponent<CharacterController>();  
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+		Debug.Log(moving)
+		
+		moving = false;
+		if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+			moving = true;
+		
         //Get Player Input
         xMove = Input.GetAxisRaw("Horizontal") * cam.right;
         zMove = Input.GetAxisRaw("Vertical") * cam.forward;
+
+        if ((Input.GetButton("Fire1")) && (aS == (int)ATTACK.Idle)) {
+            s = (int)STATES.Attack;
+            aS = (int)ATTACK.StartUp;
+            attackTimer = attackStart;
+        }
 
         dir = xMove + zMove;
         dir.y = 0;
         dir.Normalize();
 
         //Turn to face movement dir
-        if ((Input.GetAxisRaw("Horizontal") != 0) || (Input.GetAxisRaw("Vertical") != 0))
-        {
-            targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-        }
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        transform.rotation = Quaternion.Euler(0f, angle, 0f);
-		
-        //Movement
+        transform.rotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
+
+        //Apply Gravity
         if (c_c.isGrounded)
         {
-            GroundMove();
+            vel.y = -grav;
         }
         else
         {
-            AirMove();
+            vel.y -= grav;
+        }
+
+        //State Machine
+        switch (s)
+        {
+            case 0:
+                if (c_c.isGrounded)
+                {
+                    GroundMove();
+                }
+                else
+                {
+                    AirMove();
+                }
+                break;
+            case 1:
+                Attack();
+                break;
         }
 
         //Apply velocity
         c_c.Move(vel * Time.deltaTime);
 		
-		//Restart
-		if (Input.GetKeyUp(KeyCode.R)) {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-    }
+		
+			
+	}
 
     //Handles Ground Movement
     private void GroundMove()
@@ -115,16 +166,14 @@ public class Player_Movement : MonoBehaviour
         if (Vector3.Dot(vel, dir) < 0)
         {
             accel = gSettings.Decc;
-        }
+		}
         else
         {
             accel = gSettings.Acc;
         }
 
         //Jumping "Yahoo~♪"
-        vel.y = -grav;
-		
-		if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
 		{
 			vel.y = jumpSpd;
 		}
@@ -132,6 +181,8 @@ public class Player_Movement : MonoBehaviour
         //Apply Accelearation and Clamp Speed
         vel.x = Mathf.Clamp((vel.x + (dir.x * accel)), -gSettings.Spd, gSettings.Spd);
         vel.z = Mathf.Clamp((vel.z + (dir.z * accel)), -gSettings.Spd, gSettings.Spd);
+		
+		//Debug.Log(vel.magnitude);
     }
 
     //Applies Friction
@@ -163,13 +214,64 @@ public class Player_Movement : MonoBehaviour
     //Handles Air Movement
     private void AirMove()
     {
-        //Apply Gravity
-        vel.y -= grav;
-
         //Apply Accelearation and Clamp Speed
         accel = aSettings.Acc;
 
         vel.x = Mathf.Clamp((vel.x + (dir.x * accel)), -gSettings.Spd, gSettings.Spd);
         vel.z = Mathf.Clamp((vel.z + (dir.z * accel)), -gSettings.Spd, gSettings.Spd);
+    }
+
+    //Handles Attacks
+    private void Attack()
+    {
+        switch (aS)
+        {
+            case 1:
+                vel.x *= 0.95f;
+                vel.z *= 0.95f;
+                break;
+            case 2:
+                hitbox.SetActive(true);
+                break;
+            case 3:
+                hitbox.SetActive(false);
+                vel.x *= 0.9f;
+                vel.z *= 0.9f;
+                break;
+
+        }
+
+        attackTimer -= Time.deltaTime;
+        if (attackTimer <= 0)
+        {
+            switch (aS)
+            {
+                case 0:
+                    s = (int)STATES.Main;
+                    break;
+                case 1:
+                    aS = (int)ATTACK.Active;
+                    attackTimer = attackActive;
+                    break;
+                case 2:
+                    aS = (int)ATTACK.Cooldown;
+                    attackTimer = attackCooldown;
+                    vel2 = cam.forward * gSettings.Spd * 1.5f;
+                    vel2.y = vel.y;
+                    vel = vel2;
+                    break;
+                case 3:
+                    aS = (int)ATTACK.Idle;
+                    break;
+            }
+        }
+    }
+
+    private void OnTriggerHit(Collider other)
+    {
+        if (other.tag == "Enemy")
+        {
+            other.gameObject.GetComponent<BaseEnemy>().vel = vel*2;
+        }
     }
 }

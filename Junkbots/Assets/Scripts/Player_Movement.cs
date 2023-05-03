@@ -39,7 +39,7 @@ public class Player_Movement : MonoBehaviour
 
     //Current Velocity Variables
     float currSpd = 0f;
-    Vector3 vel = Vector3.zero;
+    public Vector3 vel = Vector3.zero;
     Vector3 vel2 = Vector3.zero;
     float accel = 0;
 
@@ -54,6 +54,10 @@ public class Player_Movement : MonoBehaviour
     float attackCooldown = 0.5f;
     float attackTimer = 0f;
     float range = 1f;
+	
+
+	bool moving = false;
+
 
     //State Machine stuff for later ;)
     enum STATES
@@ -89,12 +93,18 @@ public class Player_Movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        c_c = gameObject.GetComponent<CharacterController>();
+        c_c = gameObject.GetComponent<CharacterController>();  
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+		Debug.Log(moving);
+		
+		moving = false;
+		if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+			moving = true;
+		
         //Get Player Input
         xMove = Input.GetAxisRaw("Horizontal") * cam.right;
         zMove = Input.GetAxisRaw("Vertical") * cam.forward;
@@ -142,7 +152,10 @@ public class Player_Movement : MonoBehaviour
 
         //Apply velocity
         c_c.Move(vel * Time.deltaTime);
-    }
+		
+		
+			
+	}
 
     //Handles Ground Movement
     private void GroundMove()
@@ -153,7 +166,7 @@ public class Player_Movement : MonoBehaviour
         if (Vector3.Dot(vel, dir) < 0)
         {
             accel = gSettings.Decc;
-        }
+		}
         else
         {
             accel = gSettings.Acc;
@@ -168,6 +181,8 @@ public class Player_Movement : MonoBehaviour
         //Apply Accelearation and Clamp Speed
         vel.x = Mathf.Clamp((vel.x + (dir.x * accel)), -gSettings.Spd, gSettings.Spd);
         vel.z = Mathf.Clamp((vel.z + (dir.z * accel)), -gSettings.Spd, gSettings.Spd);
+		
+		//Debug.Log(vel.magnitude);
     }
 
     //Applies Friction
