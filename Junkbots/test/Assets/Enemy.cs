@@ -13,7 +13,7 @@ public class Enemy : FiniteStateMachine
     public EnemyChaseState chaseState;
 
     public NavMeshAgent Agent { get; private set; }
-//    public Animator Anim {  get; private set; }
+    //public Animator Anim { get; private set; }
 
     public AudioSource AudioSource { get; private set; }
 
@@ -31,10 +31,10 @@ public class Enemy : FiniteStateMachine
         {
             AudioSource = aSrc;
         }
- //       if (transform.GetChild(0).TryGetComponent(out Animator anim) == true)
-//        {
- //           Anim = anim;
- //       }
+        //if (transform.GetChild(0).TryGetComponent(out Animator anim) == true)
+        //{
+        //    Anim = anim;
+        //}
     }
 
     // Start is called before the first frame update
@@ -102,7 +102,7 @@ public class EnemyIdleState : EnemyBehaviourState
         Instance.Agent.isStopped = true;
         idleTime = Random.Range(idleTimeRange.x, idleTimeRange.y);
         timer = 0;
-    //    Instance.Anim.SetBool("Moving", false);
+        //Instance.Anim.SetBool("Moving", false);
         Debug.Log("idle waiting for " + idleTime + " seconds");
     }
 
@@ -161,8 +161,8 @@ public class EnemyWanderState : EnemyBehaviourState
             Random.Range(-Instance.bounds.extents.z, Instance.bounds.extents.z));
         targetPosition = randomPosInBounds;
         Instance.Agent.SetDestination(targetPosition);
-    //    Instance.Anim.SetBool("Moving", true);
-    //    Instance.Anim.SetBool("Chasing", false);
+        //Instance.Anim.SetBool("Moving", true);
+        //Instance.Anim.SetBool("Chasing", false);
         Debug.Log("target pos " + targetPosition);
     }
 
@@ -211,8 +211,8 @@ public class EnemyChaseState : EnemyBehaviourState
     {
         Instance.Agent.isStopped = false;
         Instance.Agent.speed = chaseSpeed;
-//        Instance.Anim.SetBool("Moving", true);
-//        Instance.Anim.SetBool("Chasing", true);
+        //Instance.Anim.SetBool("Moving", true);
+        //Instance.Anim.SetBool("Chasing", true);
         Debug.Log("chase on");
     }
 

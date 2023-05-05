@@ -745,5 +745,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   above: 0
-  up: 2
-  down: -2
+  down: 2
