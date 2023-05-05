@@ -51,7 +51,7 @@ public class Player_Movement : MonoBehaviour
     //Attack Variables
     float attackStart = 0.02f;
     float attackActive = 0.25f;
-    float attackCooldown = 0.25f;
+    float attackCooldown = 0.4f;
     float attackTimer = 0f;
     float range = 1f;
     public float damage = 5f;
@@ -86,6 +86,7 @@ public class Player_Movement : MonoBehaviour
     private CharacterController c_c;
     public GameObject hitbox;
     public Transform cam;
+	public GameObject trail;
 
     // Start is called before the first frame update
     void Start()
@@ -104,6 +105,7 @@ public class Player_Movement : MonoBehaviour
             s = (int)STATES.Attack;
             aS = (int)ATTACK.StartUp;
             attackTimer = attackStart;
+			trail.SetActive(true);
         }
 
         dir = xMove + zMove;
@@ -255,4 +257,15 @@ public class Player_Movement : MonoBehaviour
             }
         }
     }
+	
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.tag == "Enemy")
+		{
+			if (aS == (int)ATTACK.Active)
+			{
+				aS = (int)ATTACK.Idle;
+			}
+		}
+	}
 }

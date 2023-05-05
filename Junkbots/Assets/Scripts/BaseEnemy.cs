@@ -62,7 +62,7 @@ public class BaseEnemy : MonoBehaviour
         if (other.tag == "Melee")
         {
             Vector3 dir = (transform.position - other.transform.position).normalized;
-            vel = 28 * dir;
+            vel = 21 * dir;
             vel.y = 16;
             var s = other.transform.parent.GetComponent<Player_Movement>();
             Debug.Log(s.damage);
