@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BaseEnemy : MonoBehaviour
 {
-    float grav = 1f;
+    float grav = 0.8f;
+    float fric = 0.1f;
 
     public Vector3 vel = Vector3.zero;
 
@@ -21,7 +22,7 @@ public class BaseEnemy : MonoBehaviour
     {
         if (c_c.isGrounded)
         {
-            vel.y = -grav;
+            Friction();
         }
         else
         {
@@ -30,9 +31,41 @@ public class BaseEnemy : MonoBehaviour
 
         c_c.Move(vel * Time.deltaTime);
     }
-	
-	private void TakeDamage(Vector3 Force)
-	{
-		vel.
-	}
+
+    private void Friction()
+    {
+        Vector3 velocity = vel;
+        velocity.y = 0;
+        float speed = velocity.magnitude;
+        float drop = 0;
+
+        float control = speed < 0.5f ? 0.5f : speed;
+        drop = control * fric;
+
+        float newSpeed = speed - drop;
+        if (newSpeed < 0)
+        {
+            newSpeed = 0;
+        }
+
+        if (newSpeed > 0)
+        {
+            newSpeed /= speed;
+        }
+
+        vel.x *= newSpeed;
+        vel.z *= newSpeed;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Melee")
+        {
+            Vector3 dir = (transform.position - other.transform.position).normalized;
+            vel = 28 * dir;
+            vel.y = 16;
+            var s = other.transform.parent.GetComponent<Player_Movement>();
+            Debug.Log(s.damage);
+        }
+    }
 }

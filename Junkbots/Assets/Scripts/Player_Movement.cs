@@ -110,9 +110,6 @@ public class Player_Movement : MonoBehaviour
         dir.y = 0;
         dir.Normalize();
 
-        //Turn to face movement dir
-        transform.rotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
-
         //Apply Gravity
         if (c_c.isGrounded)
         {
@@ -144,6 +141,12 @@ public class Player_Movement : MonoBehaviour
         //Apply velocity
         c_c.Move(vel * Time.deltaTime);
     }
+	
+	private void LateUpdate()
+	{
+		//Turn to face movement dir
+        transform.rotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
+	}
 
     //Handles Ground Movement
     private void GroundMove()
@@ -252,4 +255,15 @@ public class Player_Movement : MonoBehaviour
             }
         }
     }
+	
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.tag == "Enemy")
+		{
+			if (aS == (int)ATTACK.Active)
+			{
+				aS = (int)ATTACK.Idle;
+			}
+		}
+	}
 }

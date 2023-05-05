@@ -27,7 +27,7 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] private float fric = 0.1f;
 
     //Player Jump Variables
-    [SerializeField] private float grav = 1f;
+    [SerializeField] private float grav = 0.8f;
     [SerializeField] private float jumpSpd = 20f;
 
     //Input Variables
@@ -51,9 +51,10 @@ public class Player_Movement : MonoBehaviour
     //Attack Variables
     float attackStart = 0.02f;
     float attackActive = 0.25f;
-    float attackCooldown = 0.5f;
+    float attackCooldown = 0.25f;
     float attackTimer = 0f;
     float range = 1f;
+    public float damage = 5f;
 
     //State Machine stuff for later ;)
     enum STATES
@@ -83,7 +84,7 @@ public class Player_Movement : MonoBehaviour
     int aS = (int)ATTACK.Idle;
 
     private CharacterController c_c;
-    public Collider[] hitbox;
+    public GameObject hitbox;
     public Transform cam;
 
     // Start is called before the first frame update
@@ -109,9 +110,6 @@ public class Player_Movement : MonoBehaviour
         dir.y = 0;
         dir.Normalize();
 
-        //Turn to face movement dir
-        transform.rotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
-
         //Apply Gravity
         if (c_c.isGrounded)
         {
@@ -136,13 +134,19 @@ public class Player_Movement : MonoBehaviour
                 }
                 break;
             case 1:
-                Attack(hitbox[0]);
+                Attack();
                 break;
         }
 
         //Apply velocity
         c_c.Move(vel * Time.deltaTime);
     }
+	
+	private void LateUpdate()
+	{
+		//Turn to face movement dir
+        transform.rotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
+	}
 
     //Handles Ground Movement
     private void GroundMove()
@@ -207,7 +211,7 @@ public class Player_Movement : MonoBehaviour
     }
 
     //Handles Attacks
-    private void Attack(Collider col)
+    private void Attack()
     {
         switch (aS)
         {
@@ -216,6 +220,9 @@ public class Player_Movement : MonoBehaviour
                 vel.z *= 0.95f;
                 break;
             case 2:
+                vel2 = cam.forward * gSettings.Spd * 1.5f;
+                vel2.y = vel.y;
+                vel = vel2;
                 break;
             case 3:
                 vel.x *= 0.9f;
@@ -226,16 +233,7 @@ public class Player_Movement : MonoBehaviour
 
         attackTimer -= Time.deltaTime;
         if (attackTimer <= 0)
-        {
-			Collider[] cols = Physics.OverlapBox(col.bounds.center,col.bounds.extents,col.transform.rotation,LayerMask.GetMask("Hitbox"));
-			foreach(Collider c in cols)
-			{
-				if(c.transform.parent == transform)
-					continue;
-				
-				c.SendMessageUpwards("TakeDamage", gSettings.Spd*2*dir);
-			}
-			
+        {	
             switch (aS)
             {
                 case 0:
@@ -243,14 +241,13 @@ public class Player_Movement : MonoBehaviour
                     break;
                 case 1:
                     aS = (int)ATTACK.Active;
+                    hitbox.SetActive(true);
                     attackTimer = attackActive;
                     break;
                 case 2:
                     aS = (int)ATTACK.Cooldown;
+                    hitbox.SetActive(false);
                     attackTimer = attackCooldown;
-                    vel2 = cam.forward * gSettings.Spd * 1.5f;
-                    vel2.y = vel.y;
-                    vel = vel2;
                     break;
                 case 3:
                     aS = (int)ATTACK.Idle;
