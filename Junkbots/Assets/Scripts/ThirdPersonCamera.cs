@@ -30,7 +30,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	//Camera Collision
 	Vector3 camDir;
-	Vector2 camMinMax = new Vector2(2, 4);
+	Vector2 camMinMax = new Vector2(1, 2);
 
 	void Start()
     {
