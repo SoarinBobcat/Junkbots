@@ -7,6 +7,7 @@ public class Enemy : FiniteStateMachine
 {
     public Bounds bounds;
     public float viewRadius;
+    public float atRadius;
     public Transform player;
     public EnemyIdleState idleState;
     public EnemyWanderState wanderState;
@@ -40,7 +41,8 @@ public class Enemy : FiniteStateMachine
     // Start is called before the first frame update
     protected override void Start()
     {
-        base.Start(); 
+        base.Start();
+        Debug.Log(bounds.center);
     }
 
     // Update is called once per frame
@@ -87,9 +89,12 @@ public class EnemyIdleState : EnemyBehaviourState
     private Vector2 idleTimeRange = new Vector2(3, 10);
     [SerializeField]
     private AudioClip idleClip;
+   
+
 
     private float timer = -1;
     private float idleTime = 0;
+   
 
     public EnemyIdleState(Enemy instance, EnemyIdleState idle) : base(instance) 
     {
@@ -104,6 +109,7 @@ public class EnemyIdleState : EnemyBehaviourState
         timer = 0;
         //Instance.Anim.SetBool("Moving", false);
         Debug.Log("idle waiting for " + idleTime + " seconds");
+        Instance.GetComponentInChildren<UpDown>().above = false;
     }
 
     public override void OnStateExit() 
@@ -111,6 +117,9 @@ public class EnemyIdleState : EnemyBehaviourState
         timer = -1;
         idleTime = 0;
         //Debug.Log("Exiting idle state");
+        Instance.GetComponentInChildren<UpDown>().above = true;
+
+       
     }
 
     public override void OnStateUpdate() 
@@ -139,11 +148,14 @@ public class EnemyIdleState : EnemyBehaviourState
 public class EnemyWanderState : EnemyBehaviourState
 {
     private Vector3 targetPosition;
+    private float timer;
 
     [SerializeField]
     private float wanderSpeed = 3.5f;
     [SerializeField]
     private AudioClip wanderClip;
+    [SerializeField]
+    private float time = 15.0f;
 
     public EnemyWanderState(Enemy instance, EnemyWanderState wander) : base(instance) 
     {
@@ -153,12 +165,38 @@ public class EnemyWanderState : EnemyBehaviourState
 
     public override void OnStateEnter()
     {
+        timer = time;
+        Debug.Log("CENTER IS:"+ Instance.bounds.center);
+        Vector3 center = Instance.bounds.center;
         Instance.Agent.speed = wanderSpeed;
         Instance.Agent.isStopped = false;
         Vector3 randomPosInBounds = new Vector3(
             Random.Range(-Instance.bounds.extents.x, Instance.bounds.extents.x),
             Instance.transform.position.y,
+            Random.Range(-Instance.bounds.extents.z, Instance.bounds.extents.z)) + center;
+        NavMeshHit hit;
+        bool onmesh = NavMesh.SamplePosition(randomPosInBounds, out hit, 1.0f, NavMesh.AllAreas);
+        int x = 0;
+        while (!onmesh)
+        {
+            randomPosInBounds = new Vector3(
+            Random.Range(-Instance.bounds.extents.x, Instance.bounds.extents.x),
+            Instance.transform.position.y,
+            Random.Range(-Instance.bounds.extents.z, Instance.bounds.extents.z)) + center;
+            onmesh = NavMesh.SamplePosition(randomPosInBounds, out hit, 1.0f, NavMesh.AllAreas);
+            if(x >= 10) 
+            {
+                break;
+            }
+            x++;
+        }
+        while (Physics.CheckSphere(randomPosInBounds, 0.5f) == true)
+        {
+            randomPosInBounds = new Vector3(
+            Random.Range(-Instance.bounds.extents.x, Instance.bounds.extents.x),
+            Instance.transform.position.y,
             Random.Range(-Instance.bounds.extents.z, Instance.bounds.extents.z));
+        }
         targetPosition = randomPosInBounds;
         Instance.Agent.SetDestination(targetPosition);
         //Instance.Anim.SetBool("Moving", true);
@@ -172,6 +210,7 @@ public class EnemyWanderState : EnemyBehaviourState
 
     public override void OnStateUpdate()
     {
+        timer -= Time.deltaTime;
         Vector3 t = targetPosition;
         t.y = 0;
         if(Vector3.Distance(Instance.transform.position, targetPosition) <= Instance.Agent.stoppingDistance) 
@@ -183,7 +222,11 @@ public class EnemyWanderState : EnemyBehaviourState
         {
             Instance.SetState(Instance.chaseState);
         }
-
+        //Debug.Log(timer);
+        if (timer <= 0.0f)
+        {
+            Instance.SetState(Instance.idleState);
+        }
     }
 
     public override void DrawStateGizmos()
@@ -223,11 +266,22 @@ public class EnemyChaseState : EnemyBehaviourState
 
     public override void OnStateUpdate()
     {
-        Instance.Agent.SetDestination(Instance.player.position);
+        
 
-        if(Vector3.Distance(Instance.transform.position, Instance.player.position) > Instance.viewRadius) 
+        if(Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.viewRadius) 
         {
-            Instance.SetState(Instance.wanderState);
+            Instance.Agent.SetDestination(-Instance.player.position);
+            Debug.Log("run");
         }
+        if (Vector3.Distance(Instance.transform.position, Instance.player.position) > Instance.viewRadius)
+        {
+            Debug.Log("at");
+        }
+    }
+
+    public override void DrawStateGizmos()
+    {
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(-Instance.player.position, 0.5f);
     }
 }
