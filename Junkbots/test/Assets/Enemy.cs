@@ -7,6 +7,7 @@ public class Enemy : FiniteStateMachine
 {
     public Bounds bounds;
     public float viewRadius;
+    public float runDis;
     public float atRadius;
     public Transform player;
     public EnemyIdleState idleState;
@@ -58,6 +59,8 @@ public class Enemy : FiniteStateMachine
         Gizmos.DrawWireCube(bounds.center, bounds.size);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, viewRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, atRadius);
     }
 }
 
@@ -124,7 +127,7 @@ public class EnemyIdleState : EnemyBehaviourState
 
     public override void OnStateUpdate() 
     {
-        if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.viewRadius)
+        if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.atRadius)
         {
             if (Instance.CurrentState.GetType() != typeof(EnemyChaseState))
             {
@@ -218,7 +221,7 @@ public class EnemyWanderState : EnemyBehaviourState
             Instance.SetState(Instance.idleState);
         }
 
-        if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.viewRadius)
+        if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.atRadius)
         {
             Instance.SetState(Instance.chaseState);
         }
@@ -270,18 +273,30 @@ public class EnemyChaseState : EnemyBehaviourState
 
         if(Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.viewRadius) 
         {
-            Instance.Agent.SetDestination(-Instance.player.position);
+            Instance.transform.LookAt(Instance.player);
+            //Instance.transform.Rotate(new Vector3(0, - 180,0));
+            Instance.Agent.SetDestination(Instance.transform.forward * -Instance.runDis);
+            //Instance.Agent.SetDestination(dest);
             Debug.Log("run");
+
+            Instance.GetComponentInChildren<UpDown>().above = true;
         }
-        if (Vector3.Distance(Instance.transform.position, Instance.player.position) > Instance.viewRadius)
+        else if (Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.atRadius)
         {
             Debug.Log("at");
+            Instance.GetComponentInChildren<UpDown>().above = false;
+            Instance.transform.LookAt(Instance.player);
+        }
+        else if(Vector3.Distance(Instance.transform.position, Instance.player.position) > Instance.atRadius) 
+        {
+            Instance.SetState(Instance.idleState);
+            Debug.Log("no");
         }
     }
 
     public override void DrawStateGizmos()
     {
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(-Instance.player.position, 0.5f);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere( - Instance.player.position, 0.5f);
     }
 }

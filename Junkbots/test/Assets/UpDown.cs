@@ -19,11 +19,14 @@ public class UpDown : MonoBehaviour
     {
         if(above == true && aboveTic == false) 
         {
-            //while (gameObject.activeSelf)
-            {
-                transform.position -= new Vector3(0, down, 0);
-            }
-            //transform.position -= new Vector3(0, down, 0);
+            //int x = 1;
+            //while (x != down + 1)
+            //{
+            //    Debug.Log("down");
+            //    transform.position -= new Vector3(0, 1, 0);
+            //    x++;
+            //}
+            transform.position -= new Vector3(0, down, 0);
             aboveTic = true;
         }
         else if(above == false && aboveTic == true) 
