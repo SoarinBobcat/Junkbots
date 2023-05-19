@@ -270,12 +270,11 @@ public class EnemyChaseState : EnemyBehaviourState
     public override void OnStateUpdate()
     {
         
-
-        if(Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.viewRadius) 
+        new Vector3 dest;
+        if (Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.viewRadius) 
         {
             Instance.transform.LookAt(Instance.player);
-            //Instance.transform.Rotate(new Vector3(0, - 180,0));
-            Instance.Agent.SetDestination(Instance.transform.forward * -Instance.runDis);
+            Instance.Agent.SetDestination(Instance.transform.position + Instance.transform.forward * -Instance.runDis);
             //Instance.Agent.SetDestination(dest);
             Debug.Log("run");
 
@@ -293,13 +292,17 @@ public class EnemyChaseState : EnemyBehaviourState
             Debug.Log("no");
         }
         //Vector3 forward = transform.TransformDirection(Vector3.forward) * -Instance.runDis;
-        Debug.DrawLine(Vector3.zero, new Vector3(0, 5, 0), Color.green);
+        Debug.DrawLine(Instance.transform.position, Instance.transform.position + Instance.transform.forward * -Instance.runDis, Color.red);
+        //if (Vector3.Distance(Instance.transform.position, targetPosition) <= Instance.Agent.stoppingDistance)
+        //{
+        //    Instance.SetState(Instance.idleState);
+        //}
     }
 
     public override void DrawStateGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(Instance.transform.forward * -Instance.runDis, 0.5f);
+        Gizmos.DrawWireSphere(Instance.transform.position + Instance.transform.forward * -Instance.runDis, 0.5f);
         //Debug.DrawRay(Instance.transform.forward * -Instance.runDis, Color.red);
     }
 }
