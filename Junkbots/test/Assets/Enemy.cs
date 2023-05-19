@@ -292,11 +292,14 @@ public class EnemyChaseState : EnemyBehaviourState
             Instance.SetState(Instance.idleState);
             Debug.Log("no");
         }
+        //Vector3 forward = transform.TransformDirection(Vector3.forward) * -Instance.runDis;
+        Debug.DrawLine(Vector3.zero, new Vector3(0, 5, 0), Color.green);
     }
 
     public override void DrawStateGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere( - Instance.player.position, 0.5f);
+        Gizmos.DrawWireSphere(Instance.transform.forward * -Instance.runDis, 0.5f);
+        //Debug.DrawRay(Instance.transform.forward * -Instance.runDis, Color.red);
     }
 }
