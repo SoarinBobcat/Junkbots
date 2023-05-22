@@ -7,8 +7,6 @@ public class Enemy : FiniteStateMachine
 {
     public Bounds bounds;
     public float viewRadius;
-    public float runDis;
-    public float atRadius;
     public Transform player;
     public EnemyIdleState idleState;
     public EnemyWanderState wanderState;
@@ -59,8 +57,7 @@ public class Enemy : FiniteStateMachine
         Gizmos.DrawWireCube(bounds.center, bounds.size);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, viewRadius);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, atRadius);
+
     }
 }
 
@@ -112,7 +109,6 @@ public class EnemyIdleState : EnemyBehaviourState
         timer = 0;
         //Instance.Anim.SetBool("Moving", false);
         Debug.Log("idle waiting for " + idleTime + " seconds");
-        Instance.GetComponentInChildren<UpDown>().above = false;
     }
 
     public override void OnStateExit() 
@@ -120,14 +116,11 @@ public class EnemyIdleState : EnemyBehaviourState
         timer = -1;
         idleTime = 0;
         //Debug.Log("Exiting idle state");
-        Instance.GetComponentInChildren<UpDown>().above = true;
-
-       
     }
 
     public override void OnStateUpdate() 
     {
-        if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.atRadius)
+        if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.viewRadius)
         {
             if (Instance.CurrentState.GetType() != typeof(EnemyChaseState))
             {
@@ -221,7 +214,7 @@ public class EnemyWanderState : EnemyBehaviourState
             Instance.SetState(Instance.idleState);
         }
 
-        if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.atRadius)
+        if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.viewRadius)
         {
             Instance.SetState(Instance.chaseState);
         }
@@ -246,10 +239,10 @@ public class EnemyChaseState : EnemyBehaviourState
     private float chaseSpeed = 5f;
     [SerializeField]
     private AudioClip chaseClip;
-    [SerializeField]
-    private float uptime = 3.0f;
     Vector3 dess = Vector3.zero;
-    private float uptimer;
+    private Vector3 targetPosition;
+    [SerializeField]
+    private float atRadius;
 
     public EnemyChaseState(Enemy instance, EnemyChaseState chase) : base(instance) 
     {
@@ -265,7 +258,6 @@ public class EnemyChaseState : EnemyBehaviourState
         //Instance.Anim.SetBool("Chasing", true);
 
         Debug.Log("chase on");
-        Instance.GetComponentInChildren<UpDown>().above = false;
     }
 
     public override void OnStateExit()
@@ -275,49 +267,24 @@ public class EnemyChaseState : EnemyBehaviourState
 
     public override void OnStateUpdate()
     {
-        uptimer -= Time.deltaTime;
         //Debug.Log(dess);
-        if (Vector3.Distance(dess, Instance.transform.position) < 0.5) 
+        Debug.Log("run");
+        targetPosition = Instance.player.position;
+        Instance.Agent.SetDestination(targetPosition);
+        Debug.DrawLine(Instance.transform.position, Instance.transform.position + Instance.transform.forward * Instance.viewRadius, Color.red);
+        if (Vector3.Distance(Instance.transform.position, Instance.player.position) < atRadius)
         {
-            Instance.GetComponentInChildren<UpDown>().above = false;
-        }
-        else if (uptimer <= 0.0f)
-        {
-            Instance.GetComponentInChildren<UpDown>().above = false;
-        }
-        if (Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.viewRadius) 
-        {
-            Instance.transform.LookAt(Instance.player);
-            dess = Instance.transform.position + Instance.transform.forward * -Instance.runDis;
-            Instance.Agent.SetDestination(dess);
-            //Instance.Agent.SetDestination(dest);
-            Debug.Log("run");
-            uptimer = uptime;
-            Instance.GetComponentInChildren<UpDown>().above = true;
-        }
-        else if (Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.atRadius)
-        {
+            
             Debug.Log("at");
-            //Instance.GetComponentInChildren<UpDown>().above = false;
-            Instance.transform.LookAt(Instance.player);
         }
-        else if(Vector3.Distance(Instance.transform.position, Instance.player.position) > Instance.atRadius) 
-        {
-            Instance.SetState(Instance.idleState);
-            Debug.Log("no");
-        }
-        //Vector3 forward = transform.TransformDirection(Vector3.forward) * -Instance.runDis;
-        Debug.DrawLine(Instance.transform.position, Instance.transform.position + Instance.transform.forward * -Instance.runDis, Color.red);
-        //if (Vector3.Distance(Instance.transform.position, targetPosition) <= Instance.Agent.stoppingDistance)
-        //{
-        //    Instance.SetState(Instance.idleState);
-        //}
     }
 
     public override void DrawStateGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(Instance.transform.position + Instance.transform.forward * -Instance.runDis, 0.5f);
+        Gizmos.DrawWireSphere(Instance.transform.position + Instance.transform.forward * Instance.viewRadius, 0.5f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(Instance.transform.position, atRadius);
         //Debug.DrawRay(Instance.transform.forward * -Instance.runDis, Color.red);
     }
 }
