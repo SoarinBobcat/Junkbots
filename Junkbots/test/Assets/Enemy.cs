@@ -246,6 +246,8 @@ public class EnemyChaseState : EnemyBehaviourState
     private float chaseSpeed = 5f;
     [SerializeField]
     private AudioClip chaseClip;
+    Vector3 dess = Vector3.zero;
+    Vector3 dess2;
 
     public EnemyChaseState(Enemy instance, EnemyChaseState chase) : base(instance) 
     {
@@ -259,7 +261,9 @@ public class EnemyChaseState : EnemyBehaviourState
         Instance.Agent.speed = chaseSpeed;
         //Instance.Anim.SetBool("Moving", true);
         //Instance.Anim.SetBool("Chasing", true);
+
         Debug.Log("chase on");
+        Instance.GetComponentInChildren<UpDown>().above = false;
     }
 
     public override void OnStateExit()
@@ -269,12 +273,17 @@ public class EnemyChaseState : EnemyBehaviourState
 
     public override void OnStateUpdate()
     {
-        
-        new Vector3 dest;
+
+        //Debug.Log(dess);
+        if (Vector3.Distance(dess, Instance.transform.position) < 0.5) 
+        {
+            Instance.GetComponentInChildren<UpDown>().above = false;
+        }
         if (Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.viewRadius) 
         {
             Instance.transform.LookAt(Instance.player);
-            Instance.Agent.SetDestination(Instance.transform.position + Instance.transform.forward * -Instance.runDis);
+            dess = Instance.transform.position + Instance.transform.forward * -Instance.runDis;
+            Instance.Agent.SetDestination(dess);
             //Instance.Agent.SetDestination(dest);
             Debug.Log("run");
 
@@ -283,7 +292,7 @@ public class EnemyChaseState : EnemyBehaviourState
         else if (Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.atRadius)
         {
             Debug.Log("at");
-            Instance.GetComponentInChildren<UpDown>().above = false;
+            //Instance.GetComponentInChildren<UpDown>().above = false;
             Instance.transform.LookAt(Instance.player);
         }
         else if(Vector3.Distance(Instance.transform.position, Instance.player.position) > Instance.atRadius) 
