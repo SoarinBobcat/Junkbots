@@ -239,7 +239,6 @@ public class EnemyChaseState : EnemyBehaviourState
     private float chaseSpeed = 5f;
     [SerializeField]
     private AudioClip chaseClip;
-    Vector3 dess = Vector3.zero;
     private Vector3 targetPosition;
     [SerializeField]
     private float atRadius;
