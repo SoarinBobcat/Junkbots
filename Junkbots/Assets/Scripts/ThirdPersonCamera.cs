@@ -16,7 +16,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	//Camera location variables
 	private float distance = 4.0f;
-	private Vector3 offset = new Vector3(0, 2, 0);
+	private Vector3 offset = new Vector3(4, 2, 0);
 	Vector2 offYMinMax = new Vector2(0.25f, 2);
 
 	public Vector3 dir = Vector3.zero;
