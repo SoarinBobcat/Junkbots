@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : FiniteStateMachine
+public class runner : FiniteStateMachine
 {
     public Bounds bounds;
     public float viewRadius;
@@ -63,10 +63,10 @@ public class Enemy : FiniteStateMachine
 
 public abstract class EnemyBehaviourState : IState
 {
-    protected Enemy Instance { get; private set; }
+    protected runner Instance { get; private set; }
 
 
-    public EnemyBehaviourState(Enemy instance)
+    public EnemyBehaviourState(runner instance)
     {
         Instance = instance;
 
@@ -96,7 +96,7 @@ public class EnemyIdleState : EnemyBehaviourState
     private float idleTime = 0;
    
 
-    public EnemyIdleState(Enemy instance, EnemyIdleState idle) : base(instance) 
+    public EnemyIdleState(runner instance, EnemyIdleState idle) : base(instance) 
     {
         idleTimeRange = idle.idleTimeRange;
         idleClip = idle.idleClip;
@@ -153,7 +153,7 @@ public class EnemyWanderState : EnemyBehaviourState
     [SerializeField]
     private float time = 15.0f;
 
-    public EnemyWanderState(Enemy instance, EnemyWanderState wander) : base(instance) 
+    public EnemyWanderState(runner instance, EnemyWanderState wander) : base(instance) 
     {
         wanderSpeed = wander.wanderSpeed;
         wanderClip = wander.wanderClip;
@@ -243,7 +243,7 @@ public class EnemyChaseState : EnemyBehaviourState
     [SerializeField]
     private float atRadius;
 
-    public EnemyChaseState(Enemy instance, EnemyChaseState chase) : base(instance) 
+    public EnemyChaseState(runner instance, EnemyChaseState chase) : base(instance) 
     {
         chaseSpeed = chase.chaseSpeed;
         chaseClip = chase.chaseClip;

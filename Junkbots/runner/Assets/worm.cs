@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : FiniteStateMachine
+public class worm : FiniteStateMachine
 {
     public Bounds bounds;
     public float viewRadius;
     public float runDis;
     public float atRadius;
     public Transform player;
-    public EnemyIdleState idleState;
-    public EnemyWanderState wanderState;
-    public EnemyChaseState chaseState;
+    public EnemyIdleState2 idleState;
+    public EnemyWanderState2 wanderState;
+    public EnemyChaseState2 chaseState;
 
     public NavMeshAgent Agent { get; private set; }
     //public Animator Anim { get; private set; }
@@ -21,9 +21,9 @@ public class Enemy : FiniteStateMachine
 
     protected override void Awake()
     {
-        idleState = new EnemyIdleState(this, idleState);
-        wanderState = new EnemyWanderState(this, wanderState);
-        chaseState = new EnemyChaseState(this, chaseState);
+        idleState = new EnemyIdleState2(this, idleState);
+        wanderState = new EnemyWanderState2(this, wanderState);
+        chaseState = new EnemyChaseState2(this, chaseState);
         entryState = idleState;
         if (TryGetComponent(out NavMeshAgent agent) == true)
         {
@@ -64,12 +64,12 @@ public class Enemy : FiniteStateMachine
     }
 }
 
-public abstract class EnemyBehaviourState : IState
+public abstract class EnemyBehaviourState2 : IState
 {
-    protected Enemy Instance { get; private set; }
+    protected worm Instance { get; private set; }
 
 
-    public EnemyBehaviourState(Enemy instance)
+    public EnemyBehaviourState2(worm instance)
     {
         Instance = instance;
 
@@ -86,7 +86,7 @@ public abstract class EnemyBehaviourState : IState
 
 [System.Serializable]
 
-public class EnemyIdleState : EnemyBehaviourState
+public class EnemyIdleState2 : EnemyBehaviourState2
 {
     [SerializeField]
     private Vector2 idleTimeRange = new Vector2(3, 10);
@@ -99,7 +99,7 @@ public class EnemyIdleState : EnemyBehaviourState
     private float idleTime = 0;
    
 
-    public EnemyIdleState(Enemy instance, EnemyIdleState idle) : base(instance) 
+    public EnemyIdleState2(worm instance, EnemyIdleState2 idle) : base(instance) 
     {
         idleTimeRange = idle.idleTimeRange;
         idleClip = idle.idleClip;
@@ -129,7 +129,7 @@ public class EnemyIdleState : EnemyBehaviourState
     {
         if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.atRadius)
         {
-            if (Instance.CurrentState.GetType() != typeof(EnemyChaseState))
+            if (Instance.CurrentState.GetType() != typeof(EnemyChaseState2))
             {
                 Instance.SetState(Instance.chaseState);
             }
@@ -148,7 +148,7 @@ public class EnemyIdleState : EnemyBehaviourState
 }
 
 [System.Serializable]
-public class EnemyWanderState : EnemyBehaviourState
+public class EnemyWanderState2 : EnemyBehaviourState2
 {
     private Vector3 targetPosition;
     private float timer;
@@ -160,7 +160,7 @@ public class EnemyWanderState : EnemyBehaviourState
     [SerializeField]
     private float time = 15.0f;
 
-    public EnemyWanderState(Enemy instance, EnemyWanderState wander) : base(instance) 
+    public EnemyWanderState2(worm instance, EnemyWanderState2 wander) : base(instance) 
     {
         wanderSpeed = wander.wanderSpeed;
         wanderClip = wander.wanderClip;
@@ -240,7 +240,7 @@ public class EnemyWanderState : EnemyBehaviourState
 }
 
 [System.Serializable]
-public class EnemyChaseState : EnemyBehaviourState
+public class EnemyChaseState2 : EnemyBehaviourState2
 {
     [SerializeField]
     private float chaseSpeed = 5f;
@@ -251,7 +251,7 @@ public class EnemyChaseState : EnemyBehaviourState
     Vector3 dess = Vector3.zero;
     private float uptimer;
 
-    public EnemyChaseState(Enemy instance, EnemyChaseState chase) : base(instance) 
+    public EnemyChaseState2(worm instance, EnemyChaseState2 chase) : base(instance) 
     {
         chaseSpeed = chase.chaseSpeed;
         chaseClip = chase.chaseClip;

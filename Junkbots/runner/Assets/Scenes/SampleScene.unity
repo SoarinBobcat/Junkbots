@@ -428,8 +428,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 15, y: 1, z: 10}
+    m_Center: {x: 0, y: 0, z: 10}
+    m_Extent: {x: 20, y: 0, z: 10}
   viewRadius: 5
   player: {fileID: 614874277}
   idleState:
@@ -438,10 +438,11 @@ MonoBehaviour:
   wanderState:
     wanderSpeed: 5
     wanderClip: {fileID: 0}
-    time: 0
+    time: 15
   chaseState:
     chaseSpeed: 5
     chaseClip: {fileID: 0}
+    atRadius: 2
 --- !u!195 &971679834
 NavMeshAgent:
   m_ObjectHideFlags: 0

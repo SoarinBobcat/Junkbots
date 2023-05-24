@@ -27,7 +27,10 @@ public class menu : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        switch (currentButtonIndex)
+        if (Input.GetKeyDown("escape"))
+            Options2();
+
+            switch (currentButtonIndex)
         {
             case -1:
                 currentButtonIndex = 2;
