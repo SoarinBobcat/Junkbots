@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player_Movement : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class Player_Movement : MonoBehaviour
     Vector3 xMove;
     Vector3 zMove;
     Vector3 dir = Vector3.zero;
-	//bool jumpQueue = false;
+    //bool jumpQueue = false;
 
 
     //Current Velocity Variables
@@ -54,7 +55,7 @@ public class Player_Movement : MonoBehaviour
     float attackCooldown = 0.4f;
     float attackTimer = 0f;
     float range = 1f;
-    public float damage = 5f;
+    [SerializeField] public float damage = 5f;
 
     //State Machine stuff for later ;)
     enum STATES
@@ -83,6 +84,40 @@ public class Player_Movement : MonoBehaviour
 
     int aS = (int)ATTACK.Idle;
 
+    //Durability States
+    enum DURABILITY
+    {
+        Perfect,
+        Damaged,
+        Critical,
+        Missing
+    }
+
+    //Body Initialisation
+    Dictionary<string, int> partDurability = new Dictionary<string, int>()
+    {
+        {"Head", (int)DURABILITY.Damaged},
+        {"Torso", (int)DURABILITY.Perfect},
+        {"Arm_L", (int)DURABILITY.Missing},
+        {"Arm_R", (int)DURABILITY.Missing},
+        {"Leg_L", (int)DURABILITY.Perfect},
+        {"Leg_R", (int)DURABILITY.Perfect}
+    };
+
+    //UI Textures
+    //Grab UI
+    public Animator Head;
+    public Animator Torso;
+    public Animator Arm_L;
+    public Animator Arm_R;
+    public Animator Leg_L;
+    public Animator Leg_R;
+
+    //Battery
+    int battery = 100;
+    int batteryMax = 100;
+
+    //Grab Objects
     private CharacterController c_c;
     public GameObject hitbox;
     public Transform cam;
@@ -269,4 +304,10 @@ public class Player_Movement : MonoBehaviour
 			}
 		}
 	}
+
+    //GUI updates
+    private void GUIUpdate()
+    {
+        Head.Play("Base Layer.head-damaged");
+    }
 }
