@@ -8,9 +8,9 @@ public class runner : FiniteStateMachine
     public Bounds bounds;
     public float viewRadius;
     public Transform player;
-    public EnemyIdleState idleState;
-    public EnemyWanderState wanderState;
-    public EnemyChaseState chaseState;
+    public EnemyIdleState1 idleState;
+    public EnemyWanderState1 wanderState;
+    public EnemyChaseState1 chaseState;
 
     public NavMeshAgent Agent { get; private set; }
     //public Animator Anim { get; private set; }
@@ -19,9 +19,9 @@ public class runner : FiniteStateMachine
 
     protected override void Awake()
     {
-        idleState = new EnemyIdleState(this, idleState);
-        wanderState = new EnemyWanderState(this, wanderState);
-        chaseState = new EnemyChaseState(this, chaseState);
+        idleState = new EnemyIdleState1(this, idleState);
+        wanderState = new EnemyWanderState1(this, wanderState);
+        chaseState = new EnemyChaseState1(this, chaseState);
         entryState = idleState;
         if (TryGetComponent(out NavMeshAgent agent) == true)
         {
@@ -61,12 +61,12 @@ public class runner : FiniteStateMachine
     }
 }
 
-public abstract class EnemyBehaviourState : IState
+public abstract class EnemyBehaviourState1 : IState
 {
     protected runner Instance { get; private set; }
 
 
-    public EnemyBehaviourState(runner instance)
+    public EnemyBehaviourState1(runner instance)
     {
         Instance = instance;
 
@@ -83,7 +83,7 @@ public abstract class EnemyBehaviourState : IState
 
 [System.Serializable]
 
-public class EnemyIdleState : EnemyBehaviourState
+public class EnemyIdleState1 : EnemyBehaviourState1
 {
     [SerializeField]
     private Vector2 idleTimeRange = new Vector2(3, 10);
@@ -96,7 +96,7 @@ public class EnemyIdleState : EnemyBehaviourState
     private float idleTime = 0;
    
 
-    public EnemyIdleState(runner instance, EnemyIdleState idle) : base(instance) 
+    public EnemyIdleState1(runner instance, EnemyIdleState1 idle) : base(instance) 
     {
         idleTimeRange = idle.idleTimeRange;
         idleClip = idle.idleClip;
@@ -122,7 +122,7 @@ public class EnemyIdleState : EnemyBehaviourState
     {
         if (Vector3.Distance(Instance.transform.position, Instance.player.position) <= Instance.viewRadius)
         {
-            if (Instance.CurrentState.GetType() != typeof(EnemyChaseState))
+            if (Instance.CurrentState.GetType() != typeof(EnemyChaseState1))
             {
                 Instance.SetState(Instance.chaseState);
             }
@@ -141,7 +141,7 @@ public class EnemyIdleState : EnemyBehaviourState
 }
 
 [System.Serializable]
-public class EnemyWanderState : EnemyBehaviourState
+public class EnemyWanderState1 : EnemyBehaviourState1
 {
     private Vector3 targetPosition;
     private float timer;
@@ -153,7 +153,7 @@ public class EnemyWanderState : EnemyBehaviourState
     [SerializeField]
     private float time = 15.0f;
 
-    public EnemyWanderState(runner instance, EnemyWanderState wander) : base(instance) 
+    public EnemyWanderState1(runner instance, EnemyWanderState1 wander) : base(instance) 
     {
         wanderSpeed = wander.wanderSpeed;
         wanderClip = wander.wanderClip;
@@ -233,7 +233,7 @@ public class EnemyWanderState : EnemyBehaviourState
 }
 
 [System.Serializable]
-public class EnemyChaseState : EnemyBehaviourState
+public class EnemyChaseState1 : EnemyBehaviourState1
 {
     [SerializeField]
     private float chaseSpeed = 5f;
@@ -243,7 +243,7 @@ public class EnemyChaseState : EnemyBehaviourState
     [SerializeField]
     private float atRadius;
 
-    public EnemyChaseState(runner instance, EnemyChaseState chase) : base(instance) 
+    public EnemyChaseState1(runner instance, EnemyChaseState1 chase) : base(instance) 
     {
         chaseSpeed = chase.chaseSpeed;
         chaseClip = chase.chaseClip;
