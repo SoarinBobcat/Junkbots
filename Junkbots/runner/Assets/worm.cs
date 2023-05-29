@@ -13,6 +13,11 @@ public class worm : FiniteStateMachine
     public EnemyIdleState2 idleState;
     public EnemyWanderState2 wanderState;
     public EnemyChaseState2 chaseState;
+    [SerializeField]
+    public GameObject shotOj;
+    [SerializeField]
+    private float time1 = 15.0f;
+    private float timer1 = -1;
 
     public NavMeshAgent Agent { get; private set; }
     //public Animator Anim { get; private set; }
@@ -25,6 +30,7 @@ public class worm : FiniteStateMachine
         wanderState = new EnemyWanderState2(this, wanderState);
         chaseState = new EnemyChaseState2(this, chaseState);
         entryState = idleState;
+        timer1 = time1;
         if (TryGetComponent(out NavMeshAgent agent) == true)
         {
             Agent = agent;
@@ -50,6 +56,7 @@ public class worm : FiniteStateMachine
     protected override void Update()
     {
         base.Update();
+        
     }
 
     protected override void OnDrawGizmos()
@@ -61,6 +68,19 @@ public class worm : FiniteStateMachine
         Gizmos.DrawWireSphere(transform.position, viewRadius);
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, atRadius);
+    }
+
+
+    public void shot() 
+    {
+        timer1 -= Time.deltaTime;
+        Debug.Log(timer1);
+        if (timer1 <= 0.0f)
+        {
+            Instantiate(shotOj, transform.position, transform.rotation);
+            timer1 = time1;
+        }
+
     }
 }
 
@@ -246,6 +266,7 @@ public class EnemyChaseState2 : EnemyBehaviourState2
     private float chaseSpeed = 5f;
     [SerializeField]
     private AudioClip chaseClip;
+
     [SerializeField]
     private float uptime = 3.0f;
     Vector3 dess = Vector3.zero;
@@ -298,6 +319,7 @@ public class EnemyChaseState2 : EnemyBehaviourState2
         else if (Vector3.Distance(Instance.transform.position, Instance.player.position) < Instance.atRadius)
         {
             Debug.Log("at");
+            Instance.shot();
             //Instance.GetComponentInChildren<UpDown>().above = false;
             Instance.transform.LookAt(Instance.player);
         }

@@ -440,6 +440,8 @@ MonoBehaviour:
     chaseSpeed: 5
     chaseClip: {fileID: 0}
     uptime: 15
+  shotOj: {fileID: 4650772915345538741, guid: 3e97a86d2b62c0c4ca9959854a53849f, type: 3}
+  time1: 0.75
 --- !u!195 &390634106
 NavMeshAgent:
   m_ObjectHideFlags: 0
