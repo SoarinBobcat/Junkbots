@@ -10,23 +10,31 @@ public class menu : MonoBehaviour
 
     [SerializeField] private float bufferTime = 1f;
 
+    [SerializeField] private float fadeTime = 15f;
 
+    [SerializeField] private GameObject FadeP;
+    [SerializeField] private Animator Anim;
     [SerializeField] private Button playBtn;
     [SerializeField] private Button optiBtn;
     [SerializeField] private Button opti2Btn;
     [SerializeField] private Button quitBtn;
 
     private float timer = -1;
+    private float timer2 = -1;
     private int currentButtonIndex = 2;
 
     private void Awake()
     {
+        FadeP.SetActive(true);
         opt.SetActive(false);
+        Anim.SetBool("start", false);
+        timer2 = fadeTime;
     }
 
     // Update is called once per frame
     private void Update()
     {
+        Debug.Log(timer2);
         if (Input.GetKeyDown("escape"))
             Options2();
 
@@ -41,6 +49,7 @@ public class menu : MonoBehaviour
                 break;
             case 1:
                 optiBtn.Select();
+                Anim.SetBool("start", true);
                 //Debug.Log(currentButtonIndex);
                 break;
             case 0:
@@ -72,6 +81,12 @@ public class menu : MonoBehaviour
             {
                 timer = -1;
             }
+        }
+        timer2--;
+        if (timer2 < 0)
+        {
+            FadeP.SetActive(false);
+            timer2 = 0;
         }
     }
 
