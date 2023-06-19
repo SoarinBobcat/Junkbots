@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿//Main Player Script
+//Riley Stephens Last Updated: 19/06/2023
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player_Movement : MonoBehaviour
+public class Player_Main : MonoBehaviour
 {
     //Movment Variable Class Set Up
     [System.Serializable]
@@ -305,9 +308,9 @@ public class Player_Movement : MonoBehaviour
 		}
 	}
 
-    //GUI updates
+    /*GUI updates
     private void GUIUpdate()
     {
         Head.Play("Base Layer.head-damaged");
-    }
+    }*/
 }

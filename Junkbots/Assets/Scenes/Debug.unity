@@ -1808,7 +1808,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1432920687
 Transform:
   m_ObjectHideFlags: 0
@@ -1843,7 +1843,7 @@ GameObject:
   - component: {fileID: 1493457300}
   - component: {fileID: 1493457299}
   - component: {fileID: 1493457298}
-  - component: {fileID: 1493457297}
+  - component: {fileID: 1493457303}
   m_Layer: 7
   m_Name: Phil Bean
   m_TagString: Player
@@ -1851,39 +1851,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1493457297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1493457296}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dcfb1fb21c9c5c40985e46ee08f3a43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gSettings:
-    Spd: 20
-    Acc: 1
-    Decc: 0.5
-  aSettings:
-    Spd: 20
-    Acc: 0.5
-    Decc: 0.5
-  fric: 0.1
-  grav: 0.8
-  jumpSpd: 20
-  damage: 5
-  Head: {fileID: 0}
-  Torso: {fileID: 0}
-  Arm_L: {fileID: 0}
-  Arm_R: {fileID: 0}
-  Leg_L: {fileID: 0}
-  Leg_R: {fileID: 0}
-  hitbox: {fileID: 1501388576}
-  cam: {fileID: 411989223}
-  trail: {fileID: 81671446}
 --- !u!143 &1493457298
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1987,6 +1954,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1493457303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493457296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dcfb1fb21c9c5c40985e46ee08f3a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gSettings:
+    Spd: 20
+    Acc: 1
+    Decc: 0.5
+  aSettings:
+    Spd: 20
+    Acc: 0.5
+    Decc: 0.5
+  fric: 0.1
+  grav: 0.8
+  jumpSpd: 20
+  damage: 5
+  Head: {fileID: 0}
+  Torso: {fileID: 0}
+  Arm_L: {fileID: 0}
+  Arm_R: {fileID: 0}
+  Leg_L: {fileID: 0}
+  Leg_R: {fileID: 0}
+  hitbox: {fileID: 1501388576}
+  cam: {fileID: 411989223}
+  trail: {fileID: 81671446}
 --- !u!1 &1501388576
 GameObject:
   m_ObjectHideFlags: 0

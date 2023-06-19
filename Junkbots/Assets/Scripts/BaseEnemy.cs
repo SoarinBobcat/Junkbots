@@ -64,7 +64,7 @@ public class BaseEnemy : MonoBehaviour
             Vector3 dir = (transform.position - other.transform.position).normalized;
             vel = 21 * dir;
             vel.y = 16;
-            var s = other.transform.parent.GetComponent<Player_Movement>();
+            var s = other.transform.parent.GetComponent<Player_Main>();
             Debug.Log(s.damage);
         }
     }
