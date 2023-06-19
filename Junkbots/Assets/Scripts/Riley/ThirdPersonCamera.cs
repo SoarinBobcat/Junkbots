@@ -32,14 +32,15 @@ public class ThirdPersonCamera : MonoBehaviour
 	Vector3 camDir;
 	Vector2 camMinMax = new Vector2(2, 3);
 
+	//Get canvas to dtemrine when to stop camera movment (aka when paused)
+	public Canvas menu;
+
 	void Start()
     {
 		camTransform = transform;
 		cam = Camera.main;
 
 		camDir = cam.transform.localPosition.normalized;
-
-		Cursor.lockState = CursorLockMode.Locked;
 	}
 
 	void Update()
@@ -54,20 +55,23 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
-		CamCollision();
-		Vector3 dir = new Vector3(0, 0, -distance);
-		Quaternion rot = Quaternion.Euler(currY, currX, 0);
-
-		//Lower camera offset when coming closer to player
-		offset.y = Mathf.Clamp(offYMinMax.y * (distance / camMinMax.y), offYMinMax.x, offYMinMax.y);
-
-		//Set position and rotation
-		camTransform.position = (lookAt.position + offset) + rot * dir;
-
-		camTransform.LookAt(lookAt.position);
-		if (currY < 0)
+		if (!menu.GetComponent<menuG>().pause)
 		{
-			camTransform.Rotate(-25 * (Mathf.Abs(currY) / Mathf.Abs(Y_Min)), 0, 0);
+			CamCollision();
+			Vector3 dir = new Vector3(0, 0, -distance);
+			Quaternion rot = Quaternion.Euler(currY, currX, 0);
+
+			//Lower camera offset when coming closer to player
+			offset.y = Mathf.Clamp(offYMinMax.y * (distance / camMinMax.y), offYMinMax.x, offYMinMax.y);
+
+			//Set position and rotation
+			camTransform.position = (lookAt.position + offset) + rot * dir;
+
+			camTransform.LookAt(lookAt.position);
+			if (currY < 0)
+			{
+				camTransform.Rotate(-25 * (Mathf.Abs(currY) / Mathf.Abs(Y_Min)), 0, 0);
+			}
 		}
 	}
 
