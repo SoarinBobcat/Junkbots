@@ -5,7 +5,7 @@ using UnityEngine;
 public class BaseEnemy : MonoBehaviour
 {
     float grav = 0.8f;
-    float fric = 0.1f;
+    public float fric = 0.1f;
 
     public Vector3 vel = Vector3.zero;
 
